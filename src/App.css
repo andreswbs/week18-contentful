@@ -7,6 +7,20 @@
   pointer-events: none;
 }
 
+.posts {
+  display: flex;
+}
+
+.posts div {
+  width: 300px;
+  height: 150px;
+  padding: 10px;
+  margin: 10px;
+  background-color: aqua;
+  background-size: cover;
+  background-position: center;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
