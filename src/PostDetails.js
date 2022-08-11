@@ -9,7 +9,7 @@ function PostDetails({post}) {
             <div>
                 {post.fields.excerpt}
             </div>
-            <div>
+            <div className="contentDetails">
                 {documentToReactComponents(post.fields.content)  }
             </div>
         </div>

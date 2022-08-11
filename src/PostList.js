@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react'
 import PostDetails from './PostDetails'
+import {loadAssets, loadEntries} from './controllers/content'
 
 export default function PostList() {
     const [entries, setEntries] = useState(false)
@@ -7,23 +8,6 @@ export default function PostList() {
     const [authors, setAuthors] = useState(false)
     const [activePost, setActivePost] = useState(false)
 
-
-    const apiHost = "https://cdn.contentful.com"
-    async function loadEntries() {
-        const url = `https://cdn.contentful.com/spaces/${process.env.REACT_APP_SPACE_ID}/environments/${process.env.REACT_APP_ENVIRONMENT}/entries?access_token=${process.env.REACT_APP_ACCESS_TOKEN}`
-        const response = await fetch(url)
-        const result = await response.json()
-
-        const authorsArray = result.items.filter((e) => e.sys.contentType.sys.id === 'author')
-        console.log(authorsArray)
-        const authorsObj = {}
-        authorsArray.forEach(author => {
-            authorsObj[author.sys.id] = author
-        });
-
-        setEntries(result)
-        setAuthors(authorsObj)
-    }
     async function selectPost(postId) {
         const post = entries.items.find(e => (
             e.sys.contentType.sys.id === 'post' && e.sys.id === postId
@@ -32,16 +16,20 @@ export default function PostList() {
         setActivePost(post)
         return post
     }
-    async function loadAssets() {
-        const url = `${apiHost}/spaces/${process.env.REACT_APP_SPACE_ID}/environments/${process.env.REACT_APP_ENVIRONMENT}/assets?access_token=${process.env.REACT_APP_ACCESS_TOKEN}`
-        const response = await fetch(url)
-        const result = await response.json()
-        console.log('Assets:',result)
-        setAssets(result)
-    }
+
     useEffect(() => {
-        loadEntries()
-        loadAssets()
+        loadEntries().then((result)=> {
+            const authorsArray = result.items.filter((e) => e.sys.contentType.sys.id === 'author')
+            console.log(authorsArray)
+            const authorsObj = {}
+            authorsArray.forEach(author => {
+                authorsObj[author.sys.id] = author
+            });
+    
+            setEntries(result)
+            setAuthors(authorsObj)
+        })
+        loadAssets().then((assets)=> {setAssets(assets)})
     }, [])
 
     if (!entries || !assets || !authors) {
